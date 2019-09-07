@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 )
 
@@ -27,6 +28,7 @@ type Config struct {
 	BaseDirectory  string
 	Mode           ServerMode
 	JarFilePattern string
+	ListenPort     int
 }
 
 // Load parses the command-line and returns a Config instance with the config data.
@@ -96,6 +98,16 @@ func Load() (*Config, error) {
 		case "jarname":
 			cfg.JarFilePattern = value
 			break
+		case "listen":
+			if value == "" {
+				break
+			}
+			port, err := strconv.Atoi(value)
+			if err != nil {
+				return nil, fmt.Errorf("invalid 'listen' (expected integer): %s: %v", value, err)
+			}
+			cfg.ListenPort = port
+			break
 		default:
 			return nil, fmt.Errorf("invalid name: %s", name)
 		}
@@ -103,6 +115,9 @@ func Load() (*Config, error) {
 
 	if cfg.JarFilePattern == "" {
 		cfg.JarFilePattern = defJarFilePattern
+	}
+	if cfg.ListenPort == 0 {
+		cfg.ListenPort = 8080
 	}
 
 	return cfg, nil
