@@ -47,11 +47,16 @@ func Launch(cfg *config.Config) (*Instance, error) {
 	}
 	log.Printf("Found jar: %s", jarFilePath)
 
+	javaCmd := "java"
+	if cfg.JavaPath != "" {
+		javaCmd = path.Join(cfg.JavaPath, "bin", "java")
+	}
+
 	inst := &Instance{}
 
 	// TODO: use CommandContext so we can kill the process when we die as well.
 	inst.cmdCreator = func() *exec.Cmd {
-		cmd := exec.Command("java", "-jar", jarFilePath)
+		cmd := exec.Command(javaCmd, "-jar", jarFilePath)
 		cmd.Dir = cfg.BaseDirectory
 		// TODO: set Stdin, Stdout and Stderr
 		cmd.Stdout = os.Stdout

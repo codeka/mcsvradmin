@@ -27,6 +27,7 @@ type Config struct {
 	BaseDirectory  string
 	Mode           ServerMode
 	JarFilePattern string
+	JavaPath       string
 }
 
 // Load parses the command-line and returns a Config instance with the config data.
@@ -96,6 +97,8 @@ func Load() (*Config, error) {
 		case "jarname":
 			cfg.JarFilePattern = value
 			break
+		case "javadir":
+			cfg.JavaPath = value
 		default:
 			return nil, fmt.Errorf("invalid name: %s", name)
 		}
