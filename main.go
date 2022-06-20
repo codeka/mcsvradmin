@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
 
 	"github.com/codeka/mcsvradmin/config"
 	"github.com/codeka/mcsvradmin/mcsvr"
+	"github.com/codeka/mcsvradmin/static"
 )
 
 func sayHello(w http.ResponseWriter, r *http.Request) {
@@ -27,11 +29,14 @@ func main() {
 		log.Fatalf("error launching: %v", err)
 	}
 	inst.MonitorProcess()
-	// Stuff.
 
-	http.Handle("/", http.FileServer(http.Dir("./static")))
-	http.HandleFunc("/ping", sayHello)
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		panic(err)
-	}
+	http.Handle("/", http.FileServer(static.Assets))
+        http.HandleFunc("/ping", sayHello)
+
+        url := fmt.Sprintf(":%d", cfg.ListenPort)
+        log.Printf("Web server listening on '%s'...", url)
+        if err := http.ListenAndServe(url, nil); err != nil {
+                panic(err)
+        }
 }
+
