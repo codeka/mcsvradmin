@@ -56,9 +56,10 @@ func Launch(cfg *config.Config) (*Instance, error) {
 
 	// TODO: use CommandContext so we can kill the process when we die as well.
 	inst.cmdCreator = func() *exec.Cmd {
-		cmd := exec.Command(javaCmd, "-jar", jarFilePath)
+		cmd := exec.Command(javaCmd, "-jar", jarFilePath, "-nogui")
 		cmd.Dir = cfg.BaseDirectory
-		// TODO: set Stdin, Stdout and Stderr
+		// TODO: set Stdin, Stdout and Stderr so that we can write to it ourselves.
+		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		return cmd
@@ -77,6 +78,7 @@ func (inst *Instance) start() error {
 		// Something?
 	}
 	inst.Cmd = inst.cmdCreator()
+	log.Printf("Running: %s", inst.Cmd.String())
 	return inst.Cmd.Start()
 }
 
