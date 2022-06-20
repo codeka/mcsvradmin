@@ -78,7 +78,7 @@ func (inst *Instance) start() error {
 		// Something?
 	}
 	inst.Cmd = inst.cmdCreator()
-	log.Printf("Running: %s", inst.Cmd.String())
+	log.Printf("Running: %s", inst.Cmd.Path)
 	return inst.Cmd.Start()
 }
 
@@ -103,4 +103,3 @@ func (inst *Instance) MonitorProcess() {
 		inst.start()
 	}
 }
-

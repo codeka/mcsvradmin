@@ -5,6 +5,9 @@
 *.so
 *.dylib
 
+# Generated file.
+static/static_vsfgen.go
+
 # Test binary, build with `go test -c`
 *.test
 

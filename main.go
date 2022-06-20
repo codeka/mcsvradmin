@@ -28,15 +28,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("error launching: %v", err)
 	}
-	inst.MonitorProcess()
+	go inst.MonitorProcess()
 
 	http.Handle("/", http.FileServer(static.Assets))
-        http.HandleFunc("/ping", sayHello)
+	http.HandleFunc("/ping", sayHello)
 
-        url := fmt.Sprintf(":%d", cfg.ListenPort)
-        log.Printf("Web server listening on '%s'...", url)
-        if err := http.ListenAndServe(url, nil); err != nil {
-                panic(err)
-        }
+	url := fmt.Sprintf(":%d", cfg.ListenPort)
+	log.Printf("Web server listening on '%s'...", url)
+	if err := http.ListenAndServe(url, nil); err != nil {
+		panic(err)
+	}
 }
-
