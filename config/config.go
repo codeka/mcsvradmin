@@ -29,6 +29,7 @@ type Config struct {
 	Mode           ServerMode
 	JarFilePattern string
 	JavaPath       string
+	JavaArgs       string
 	ListenPort     int
 }
 
@@ -87,18 +88,14 @@ func Load() (*Config, error) {
 			case "vanilla":
 				cfg.Mode = Vanilla
 				defJarFilePattern = "minecraft_server*.jar"
-				break
 			case "forge":
 				cfg.Mode = Forge
 				defJarFilePattern = "forge-*.jar"
-				break
 			default:
 				return nil, fmt.Errorf("invalid 'mode': %s", value)
 			}
-			break
 		case "jarname":
 			cfg.JarFilePattern = value
-			break
 		case "javadir":
 			cfg.JavaPath = value
 		case "listen":
@@ -110,9 +107,13 @@ func Load() (*Config, error) {
 				return nil, fmt.Errorf("invalid 'listen' (expected integer): %s: %v", value, err)
 			}
 			cfg.ListenPort = port
-			break
+		case "javaargs":
+			if value == "" {
+				break
+			}
+			cfg.JavaArgs = value
 		default:
-			return nil, fmt.Errorf("invalid name: %s", name)
+			return nil, fmt.Errorf("invalid name: '%s'", name)
 		}
 	}
 

@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/codeka/mcsvradmin/config"
@@ -52,11 +53,17 @@ func Launch(cfg *config.Config) (*Instance, error) {
 		javaCmd = path.Join(cfg.JavaPath, "bin", "java")
 	}
 
+	var args []string
+	if cfg.JavaArgs != "" {
+		args = strings.Split(cfg.JavaArgs, " ")
+	}
+	args = append(args, "-jar", jarFilePath, "nogui")
+
 	inst := &Instance{}
 
 	// TODO: use CommandContext so we can kill the process when we die as well.
 	inst.cmdCreator = func() *exec.Cmd {
-		cmd := exec.Command(javaCmd, "-jar", jarFilePath, "-nogui")
+		cmd := exec.Command(javaCmd, args...)
 		cmd.Dir = cfg.BaseDirectory
 		// TODO: set Stdin, Stdout and Stderr so that we can write to it ourselves.
 		cmd.Stdin = os.Stdin
@@ -78,7 +85,7 @@ func (inst *Instance) start() error {
 		// Something?
 	}
 	inst.Cmd = inst.cmdCreator()
-	log.Printf("Running: %s", inst.Cmd.Path)
+	log.Printf("Running: %s", inst.Cmd.String())
 	return inst.Cmd.Start()
 }
 
